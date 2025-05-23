@@ -286,3 +286,179 @@ static async load(id) {
   return new Student(data);
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+title: "HTTP Request/Response & fetch (get/post)"
+format: revealjs
+editor: visual
+---
+
+## Topics Covered
+
+1.  HTTP Request & Response
+2.  Using `fetch` API (GET & POST)
+
+------------------------------------------------------------------------
+
+## What is HTTP?
+
+-   HyperText Transfer Protocol
+-   Foundation of data communication on the web
+-   Protocol used for communication between clients (e.g., browser) and servers
+
+------------------------------------------------------------------------
+
+## HTTP Request Structure
+
+A request typically consists of:
+
+-   **Method** (e.g., GET, POST)
+-   **URL** (e.g., `/api/user`)
+-   **Headers** (metadata like content-type)
+-   **Body** (only in methods like POST/PUT)
+
+``` http
+POST /api/login HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "pass123"
+}
+```
+
+------------------------------------------------------------------------
+
+## HTTP Response Structure
+
+A response contains:
+
+-   **Status Code** (e.g., 200, 404, 500)
+-   **Headers**
+-   **Body**
+
+``` http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "Login successful",
+  "token": "abc123"
+}
+```
+
+------------------------------------------------------------------------
+
+## Common HTTP Methods
+
+-   **GET**: Retrieve data
+-   **POST**: Send new data
+-   **PUT**: Update existing data
+-   **DELETE**: Remove data
+
+------------------------------------------------------------------------
+
+## What is `fetch`?
+
+-   A modern **JavaScript API** for making HTTP requests
+-   Replaces older `XMLHttpRequest`
+-   Returns a **Promise**
+
+------------------------------------------------------------------------
+
+## `fetch` - GET Example
+
+``` js
+fetch('https://api.example.com/users')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+```
+
+-   Sends a **GET** request
+-   Parses response JSON
+-   Handles errors with `.catch()`
+
+------------------------------------------------------------------------
+
+## `fetch` - POST Example
+
+``` js
+fetch('https://api.example.com/users', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Alice',
+    age: 25
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error(error));
+```
+
+-   Sends a **POST** request
+-   Sends data in the **body**
+-   Sets proper **headers**
+
+------------------------------------------------------------------
+
+------
+
+## Fetch Example from Project
+``` js
+// Test GET /api/
+const res1 = await fetch("/api/");
+const data1 = await res1.json();
+```
+
+``` js
+// Test GET /api/students/michael
+const res3 = await fetch("/api/students/michael");
+const student = await res3.json();
+```
+
+``` js
+// Test PATCH /api/students/michael
+const res4 = await fetch("/api/students/michael", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          unitsCompleted: 150,
+          dept: "Computer Science",
+        }),
+      });
+      const updatedStudent = await res4.json();
+```
+
+------------------------------------------------------------------------
+
+------
+
+## Summary
+
+-   HTTP is the foundation of web communication
+-   Requests have methods, headers, and optionally a body
+-   `fetch` is the modern way to send HTTP requests from JavaScript
+-   Use **GET** for retrieving, **POST** for sending data
+
+------------------------------------------------------------------------
+
