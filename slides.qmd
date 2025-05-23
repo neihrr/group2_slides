@@ -1,15 +1,43 @@
 ---
-title: "My Presentation"
+title: "Fetch, async/await"
 format: revealjs
 ---
 
-## Slide 1
+## Asynchronous vs. Synchronous JavaScript
 
-This is the first slide.
+- **Synchronous JavaScript**  
+  Operations are performed one after the other.  
+  Each line of code waits for the previous one.  
+  Predictable, linear order.  
+  Each task is completed before the next one starts.
+
+- **Asynchronous JavaScript**  
+  Allows multiple tasks to run independently of each other.  
+  Non-blocking nature of execution.  
+  Improves performance and responsiveness.  
+  Widely used in modern web applications.
 
 ---
 
-## Slide 2
+## Event Loop
 
-- Bullet point 1
-- Bullet point 2
+![Internals of Asynchronous Javascript](event_loop.png)
+
+## How JavaScript Handles Asynchronous Code
+
+- **Call Stack**  
+  The call stack is where functions are executed in the order they’re called.  
+  In synchronous operations, each function is added to the stack and executed before moving to the next.
+
+- **Web APIs (in Browsers)**  
+  Functions like `setTimeout`, HTTP requests, and event listeners are handled by Web APIs in the browser.  
+  They manage the timing without blocking the main call stack.
+
+- **Callback Queue**  
+  Once the Web API has finished its job (like waiting for the timeout),  
+  it pushes the callback function (like the one in `setTimeout`) to the callback queue.
+
+- **Event Loop**  
+  The event loop continuously checks the call stack.  
+  If it’s empty, it pushes the functions from the callback queue onto the stack for execution.  
+
