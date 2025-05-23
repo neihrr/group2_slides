@@ -98,3 +98,47 @@ class Student {
 ```
 
 ---
+---
+title: "Asynchronous Class Instance Initialization"
+format: revealjs
+author: Javad Sheikhimofrad
+---
+
+## Why async static methods?
+
+- In JavaScript, constructors can't be async.
+- If you need to fetch data from a server before creating an instance, use a static async method.
+- The static method fetches data asynchronously, then creates and returns an instance.
+
+---
+
+## Example Pattern
+
+```js
+class User {
+  constructor(data) {
+    Object.assign(this, data);
+  }
+  static async load(id) {
+    let res = await fetch(`/api/users/${id}`);
+    let data = await res.json();
+    return new User(data);
+  }
+}
+
+// Usage:
+let user = await User.load("ali");
+console.log(user);
+```
+
+---
+
+## In Our Project
+
+```js
+static async load(id) {
+  let res = await fetch(`/api/students/${id}`);
+  let data = await res.json();
+  return new Student(data);
+}
+```
