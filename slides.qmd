@@ -1,5 +1,5 @@
 ---
-title: "Fetch, async/await"
+title: "Group 2- Fetch, async/await"
 format: revealjs
 ---
 
@@ -286,11 +286,6 @@ class Student {
 ```
 
 ---
----
-title: "Asynchronous Class Instance Initialization"
-format: revealjs
-author: Javad Sheikhimofrad
----
 
 ## Why async static methods?
 
@@ -343,12 +338,6 @@ static async load(id) {
 
 
 
-
----
-title: "HTTP Request/Response & fetch (get/post)"
-format: revealjs
-editor: visual
----
 
 ## Topics Covered
 

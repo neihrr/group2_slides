@@ -9,7 +9,8 @@
 <link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.7.31">
 
-  <title>Fetch, async/await</title>
+  <meta name="author" content="Javad Sheikhimofrad">
+  <title>HTTP Request/Response &amp; fetch (get/post)</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -27,6 +28,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
   <link href="slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -126,9 +193,14 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Fetch, async/await</h1>
+  <h1 class="title">HTTP Request/Response &amp; fetch (get/post)</h1>
 
 <div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Javad Sheikhimofrad 
+</div>
+</div>
 </div>
 
 </section>
@@ -207,6 +279,342 @@ If it’s empty, it pushes the functions from the callback queue onto the stack 
 <h2>Example AJAX Snipper</h2>
 
 <img data-src="ajax_jquery.png" class="r-stretch quarto-figure-center"><p class="caption">AJAX exmaple with jquery</p></section>
+<section id="rest-apis-and-json" class="slide level2">
+<h2>REST APIs and JSON</h2>
+<p><strong>REST</strong> (Representational state transfer): Defines certain rules the API will follow</p>
+<ul>
+<li>Each “thing” we want to send/receive is a “resource”</li>
+<li>Identified by a URI (path)</li>
+<li>Servers return “representation” of the resource</li>
+<li>Clients send (possibly partial) representations to update resources</li>
+<li>Servers are stateless, they don’t “remember” clients</li>
+<li>Each request includes URI, user info, authorization token, etc.</li>
+</ul>
+</section>
+<section id="promises" class="slide level2">
+<h2>Promises</h2>
+<p>Promise -&gt; is a returned object to which you attach callbacks</p>
+<ul>
+<li>pending: initial state, neither fulfilled nor rejected.</li>
+<li>fulfilled: meaning that the operation was completed successfully.</li>
+<li>rejected: meaning that the operation failed.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href=""></a><span class="kw">new</span> <span class="bu">Promise</span>((resolveOuter) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-2"><a href=""></a>  <span class="fu">resolveOuter</span>(</span>
+<span id="cb1-3"><a href=""></a>    <span class="kw">new</span> <span class="bu">Promise</span>((resolveInner) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-4"><a href=""></a>      <span class="pp">setTimeout</span>(resolveInner<span class="op">,</span> <span class="dv">1000</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href=""></a>    })<span class="op">,</span></span>
+<span id="cb1-6"><a href=""></a>  )<span class="op">;</span></span>
+<span id="cb1-7"><a href=""></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="promises-1" class="slide level2">
+<h2>Promises</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href=""></a><span class="kw">function</span> <span class="fu">successCallback</span>(result) {</span>
+<span id="cb2-2"><a href=""></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`Audio file ready at URL: </span><span class="sc">${</span>result<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href=""></a>}</span>
+<span id="cb2-4"><a href=""></a></span>
+<span id="cb2-5"><a href=""></a><span class="kw">function</span> <span class="fu">failureCallback</span>(error) {</span>
+<span id="cb2-6"><a href=""></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="vs">`Error generating audio file: </span><span class="sc">${</span>error<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb2-7"><a href=""></a>}</span>
+<span id="cb2-8"><a href=""></a></span>
+<span id="cb2-9"><a href=""></a><span class="fu">createAudioFileAsync</span>(audioSettings<span class="op">,</span> successCallback<span class="op">,</span> failureCallback)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>we can rewrite this to return a Promise -&gt;</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href=""></a><span class="fu">createAudioFileAsync</span>(audioSettings)<span class="op">.</span><span class="fu">then</span>(successCallback<span class="op">,</span> failureCallback)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="promises-2" class="slide level2">
+<h2>Promises</h2>
+<p>Beware of “callback hell” -&gt; nesting many <strong>then</strong> operations results in messy code (<strong>NOT GOOD</strong>)</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href=""></a><span class="fu">_onClick</span>(<span class="bu">event</span>) {</span>
+<span id="cb4-2"><a href=""></a>    <span class="co">/* Callback hell */</span></span>
+<span id="cb4-3"><a href=""></a>    <span class="kw">let</span> p <span class="op">=</span> <span class="fu">fetch</span>(<span class="st">"myfile.txt"</span>)<span class="op">;</span></span>
+<span id="cb4-4"><a href=""></a>    <span class="co">// This is fine, but we'd have a lot of methods</span></span>
+<span id="cb4-5"><a href=""></a>    <span class="co">//p.then(this._onResult);</span></span>
+<span id="cb4-6"><a href=""></a>    p<span class="op">.</span><span class="fu">then</span>((response) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-7"><a href=""></a>      <span class="kw">let</span> p2 <span class="op">=</span> response<span class="op">.</span><span class="fu">text</span>()<span class="op">;</span></span>
+<span id="cb4-8"><a href=""></a>      p2<span class="op">.</span><span class="fu">then</span>((text) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-9"><a href=""></a>        <span class="kw">let</span> p3 <span class="op">=</span> <span class="fu">fetch</span>(<span class="st">"person.json"</span>)<span class="op">;</span></span>
+<span id="cb4-10"><a href=""></a>        p3<span class="op">.</span><span class="fu">then</span>((res) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-11"><a href=""></a>          <span class="kw">let</span> p4 <span class="op">=</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb4-12"><a href=""></a>          p4<span class="op">.</span><span class="fu">then</span>((obj) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-13"><a href=""></a>            <span class="kw">let</span> s <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>text<span class="sc">}\n${</span>obj<span class="op">.</span><span class="at">givenName</span><span class="sc">}</span><span class="vs"> </span><span class="sc">${</span>obj<span class="op">.</span><span class="at">surname</span><span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb4-14"><a href=""></a>            <span class="bu">document</span><span class="op">.</span><span class="fu">querySelector</span>(<span class="st">"#results"</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> s<span class="op">;</span></span>
+<span id="cb4-15"><a href=""></a>          })<span class="op">;</span></span>
+<span id="cb4-16"><a href=""></a>        })<span class="op">;</span>      })<span class="op">;</span></span>
+<span id="cb4-17"><a href=""></a>    })<span class="op">;</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="promise-chains" class="slide level2">
+<h2>Promise chains</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href=""></a><span class="kw">new</span> <span class="bu">Promise</span>(<span class="kw">function</span>(resolve<span class="op">,</span> reject) {</span>
+<span id="cb5-2"><a href=""></a></span>
+<span id="cb5-3"><a href=""></a>  <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> <span class="fu">resolve</span>(<span class="dv">1</span>)<span class="op">,</span> <span class="dv">1000</span>)<span class="op">;</span> <span class="co">// (*)</span></span>
+<span id="cb5-4"><a href=""></a></span>
+<span id="cb5-5"><a href=""></a>})<span class="op">.</span><span class="fu">then</span>(<span class="kw">function</span>(result) { <span class="co">// (**)</span></span>
+<span id="cb5-6"><a href=""></a></span>
+<span id="cb5-7"><a href=""></a>  <span class="fu">alert</span>(result)<span class="op">;</span> <span class="co">// 1</span></span>
+<span id="cb5-8"><a href=""></a>  <span class="cf">return</span> result <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb5-9"><a href=""></a></span>
+<span id="cb5-10"><a href=""></a>})<span class="op">.</span><span class="fu">then</span>(<span class="kw">function</span>(result) { <span class="co">// (***)</span></span>
+<span id="cb5-11"><a href=""></a></span>
+<span id="cb5-12"><a href=""></a>  <span class="fu">alert</span>(result)<span class="op">;</span> <span class="co">// 2</span></span>
+<span id="cb5-13"><a href=""></a>  <span class="cf">return</span> result <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb5-14"><a href=""></a></span>
+<span id="cb5-15"><a href=""></a>})<span class="op">.</span><span class="fu">then</span>(<span class="kw">function</span>(result) {</span>
+<span id="cb5-16"><a href=""></a></span>
+<span id="cb5-17"><a href=""></a>  <span class="fu">alert</span>(result)<span class="op">;</span> <span class="co">// 4</span></span>
+<span id="cb5-18"><a href=""></a>  <span class="cf">return</span> result <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb5-19"><a href=""></a></span>
+<span id="cb5-20"><a href=""></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="promise-chains-1" class="slide level2">
+<h2>Promise chains</h2>
+<ul>
+<li>Easier flow (each output is and imput to the next <strong>then</strong> )</li>
+<li>Easier to debug (one <strong>catch</strong> at the end handles errors from all of the steps</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href=""></a><span class="kw">new</span> <span class="bu">Promise</span>(<span class="kw">function</span>(resolve<span class="op">,</span> reject) {</span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a>  <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> <span class="fu">resolve</span>(<span class="dv">1</span>)<span class="op">,</span> <span class="dv">1000</span>)<span class="op">;</span> <span class="co">// (*)</span></span>
+<span id="cb6-4"><a href=""></a></span>
+<span id="cb6-5"><a href=""></a>})<span class="op">.</span><span class="fu">then</span>(<span class="kw">function</span>(result) { <span class="co">// (**)</span></span>
+<span id="cb6-6"><a href=""></a></span>
+<span id="cb6-7"><a href=""></a>  <span class="fu">alert</span>(result)<span class="op">;</span> <span class="co">// 1</span></span>
+<span id="cb6-8"><a href=""></a>  <span class="cf">return</span> result <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb6-9"><a href=""></a></span>
+<span id="cb6-10"><a href=""></a>})<span class="op">.</span><span class="fu">then</span>(<span class="kw">function</span>(result) { <span class="co">// (***)</span></span>
+<span id="cb6-11"><a href=""></a></span>
+<span id="cb6-12"><a href=""></a>  <span class="fu">alert</span>(result)<span class="op">;</span> <span class="co">// 2</span></span>
+<span id="cb6-13"><a href=""></a>  <span class="cf">return</span> result <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb6-14"><a href=""></a></span>
+<span id="cb6-15"><a href=""></a>})<span class="op">.</span><span class="fu">then</span>(<span class="kw">function</span>(result) {</span>
+<span id="cb6-16"><a href=""></a></span>
+<span id="cb6-17"><a href=""></a>  <span class="fu">alert</span>(result)<span class="op">;</span> <span class="co">// 4</span></span>
+<span id="cb6-18"><a href=""></a>  <span class="cf">return</span> result <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb6-19"><a href=""></a></span>
+<span id="cb6-20"><a href=""></a>})<span class="op">.</span><span class="fu">catch</span>(<span class="kw">function</span>(err)){</span>
+<span id="cb6-21"><a href=""></a>  <span class="fu">alert</span>(err)<span class="op">;</span></span>
+<span id="cb6-22"><a href=""></a>}<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="fetch" class="slide level2">
+<h2>Fetch</h2>
+<p>fetch() -&gt; takes a path to the file (url) and return a Promise with “Response” (basically fullfills it as soon as http response arrives)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href=""></a><span class="kw">async</span> <span class="fu">listCourses</span>() {</span>
+<span id="cb7-2"><a href=""></a>    <span class="kw">let</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span><span class="kw">this</span><span class="op">.</span><span class="at">_uri</span><span class="sc">}</span><span class="vs">/courses`</span>)<span class="op">;</span></span>
+<span id="cb7-3"><a href=""></a>    <span class="kw">let</span> json <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb7-4"><a href=""></a>    <span class="cf">return</span> json<span class="op">.</span><span class="at">courses</span><span class="op">;</span></span>
+<span id="cb7-5"><a href=""></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>response.status -&gt; read the HTTP status code of the response</li>
+<li>response.text() -&gt; read the HTTP response body and encodes it as a string</li>
+<li>response.json() -&gt; interpret the response body and returns a Promise with the data</li>
+</ul>
+</section>
+<section id="rest-apis-and-json-1" class="slide level2">
+<h2>REST APIs and JSON</h2>
+<p><strong>JSON</strong> (JavaScript Object Notation)</p>
+<ul>
+<li>Based on JS object syntax, but stricter</li>
+<li>Contains strings, numbers, true, false, null, arrays, objects</li>
+<li>Each property must be in the form of <code>"key": value</code></li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource json number-lines code-with-copy"><code class="sourceCode json"><span id="cb8-1"><a href=""></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href=""></a>  <span class="dt">"id"</span><span class="fu">:</span> <span class="dv">1206</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href=""></a>  <span class="dt">"courses"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-4"><a href=""></a>    <span class="fu">{</span> <span class="dt">"dept"</span><span class="fu">:</span> <span class="st">"CS"</span><span class="fu">,</span> <span class="dt">"num"</span><span class="fu">:</span> <span class="st">"106A"</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb8-5"><a href=""></a>    <span class="fu">{</span> <span class="er">*</span><span class="dt">"dept"</span><span class="fu">:</span> <span class="st">"CS"</span><span class="er">*</span><span class="fu">,</span> <span class="dt">"num"</span><span class="fu">:</span> <span class="st">"106A"</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb8-6"><a href=""></a>   <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb8-7"><a href=""></a>   <span class="dt">"current"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb8-8"><a href=""></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Access: object.courses[1].dept</p>
+</section>
+<section id="classes-and-rest-apis" class="slide level2">
+<h2>Classes and Rest APIs</h2>
+<p>Classes can be used to model RESTful resources</p>
+<ul>
+<li><strong>Encapsulate</strong> resource-related logic and data in one place</li>
+<li><strong>Reuse</strong> methods across different instances</li>
+<li><strong>Abstract</strong> away HTTP details from the rest of the application</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb9-1"><a href=""></a><span class="kw">class</span> Student {</span>
+<span id="cb9-2"><a href=""></a>  <span class="fu">constructor</span>(data) {</span>
+<span id="cb9-3"><a href=""></a>    <span class="bu">Object</span><span class="op">.</span><span class="fu">assign</span>(<span class="kw">this</span><span class="op">,</span> data)<span class="op">;</span> <span class="co">// Initialize properties</span></span>
+<span id="cb9-4"><a href=""></a>  }</span>
+<span id="cb9-5"><a href=""></a></span>
+<span id="cb9-6"><a href=""></a>  <span class="kw">static</span> <span class="kw">async</span> <span class="fu">load</span>(id) {</span>
+<span id="cb9-7"><a href=""></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`/api/students/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb9-8"><a href=""></a>    <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb9-9"><a href=""></a>    <span class="cf">return</span> <span class="kw">new</span> <span class="fu">Student</span>(data)<span class="op">;</span></span>
+<span id="cb9-10"><a href=""></a>  }</span>
+<span id="cb9-11"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>title: “Asynchronous Class Instance Initialization” format: revealjs author: Javad Sheikhimofrad —</p>
+</section>
+<section id="why-async-static-methods" class="slide level2">
+<h2>Why async static methods?</h2>
+<ul>
+<li>In JavaScript, constructors can’t be async.</li>
+<li>If you need to fetch data from a server before creating an instance, use a static async method.</li>
+<li>The static method fetches data asynchronously, then creates and returns an instance.</li>
+</ul>
+</section>
+<section id="example-pattern" class="slide level2">
+<h2>Example Pattern</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb10-1"><a href=""></a><span class="kw">class</span> User {</span>
+<span id="cb10-2"><a href=""></a>  <span class="fu">constructor</span>(data) {</span>
+<span id="cb10-3"><a href=""></a>    <span class="bu">Object</span><span class="op">.</span><span class="fu">assign</span>(<span class="kw">this</span><span class="op">,</span> data)<span class="op">;</span></span>
+<span id="cb10-4"><a href=""></a>  }</span>
+<span id="cb10-5"><a href=""></a>  <span class="kw">static</span> <span class="kw">async</span> <span class="fu">load</span>(id) {</span>
+<span id="cb10-6"><a href=""></a>    <span class="kw">let</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`/api/users/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb10-7"><a href=""></a>    <span class="kw">let</span> data <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb10-8"><a href=""></a>    <span class="cf">return</span> <span class="kw">new</span> <span class="fu">User</span>(data)<span class="op">;</span></span>
+<span id="cb10-9"><a href=""></a>  }</span>
+<span id="cb10-10"><a href=""></a>}</span>
+<span id="cb10-11"><a href=""></a></span>
+<span id="cb10-12"><a href=""></a><span class="co">// Usage:</span></span>
+<span id="cb10-13"><a href=""></a><span class="kw">let</span> user <span class="op">=</span> <span class="cf">await</span> User<span class="op">.</span><span class="fu">load</span>(<span class="st">"ali"</span>)<span class="op">;</span></span>
+<span id="cb10-14"><a href=""></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(user)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="in-our-project" class="slide level2">
+<h2>In Our Project</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb11-1"><a href=""></a><span class="kw">static</span> <span class="kw">async</span> <span class="fu">load</span>(id) {</span>
+<span id="cb11-2"><a href=""></a>  <span class="kw">let</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`/api/students/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb11-3"><a href=""></a>  <span class="kw">let</span> data <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb11-4"><a href=""></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="fu">Student</span>(data)<span class="op">;</span></span>
+<span id="cb11-5"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="topics-covered" class="slide level2">
+<h2>Topics Covered</h2>
+<ol type="1">
+<li>HTTP Request &amp; Response</li>
+<li>Using <code>fetch</code> API (GET &amp; POST)</li>
+</ol>
+</section>
+<section id="what-is-http" class="slide level2">
+<h2>What is HTTP?</h2>
+<ul>
+<li>HyperText Transfer Protocol</li>
+<li>Foundation of data communication on the web</li>
+<li>Protocol used for communication between clients (e.g., browser) and servers</li>
+</ul>
+</section>
+<section id="http-request-structure" class="slide level2">
+<h2>HTTP Request Structure</h2>
+<p>A request typically consists of:</p>
+<ul>
+<li><strong>Method</strong> (e.g., GET, POST)</li>
+<li><strong>URL</strong> (e.g., <code>/api/user</code>)</li>
+<li><strong>Headers</strong> (metadata like content-type)</li>
+<li><strong>Body</strong> (only in methods like POST/PUT)</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource http number-lines code-with-copy"><code class="sourceCode"><span id="cb12-1"><a href=""></a>POST /api/login HTTP/1.1</span>
+<span id="cb12-2"><a href=""></a>Host: example.com</span>
+<span id="cb12-3"><a href=""></a>Content-Type: application/json</span>
+<span id="cb12-4"><a href=""></a></span>
+<span id="cb12-5"><a href=""></a>{</span>
+<span id="cb12-6"><a href=""></a>  "username": "user1",</span>
+<span id="cb12-7"><a href=""></a>  "password": "pass123"</span>
+<span id="cb12-8"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="http-response-structure" class="slide level2">
+<h2>HTTP Response Structure</h2>
+<p>A response contains:</p>
+<ul>
+<li><strong>Status Code</strong> (e.g., 200, 404, 500)</li>
+<li><strong>Headers</strong></li>
+<li><strong>Body</strong></li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource http number-lines code-with-copy"><code class="sourceCode"><span id="cb13-1"><a href=""></a>HTTP/1.1 200 OK</span>
+<span id="cb13-2"><a href=""></a>Content-Type: application/json</span>
+<span id="cb13-3"><a href=""></a></span>
+<span id="cb13-4"><a href=""></a>{</span>
+<span id="cb13-5"><a href=""></a>  "message": "Login successful",</span>
+<span id="cb13-6"><a href=""></a>  "token": "abc123"</span>
+<span id="cb13-7"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="common-http-methods" class="slide level2">
+<h2>Common HTTP Methods</h2>
+<ul>
+<li><strong>GET</strong>: Retrieve data</li>
+<li><strong>POST</strong>: Send new data</li>
+<li><strong>PUT</strong>: Update existing data</li>
+<li><strong>DELETE</strong>: Remove data</li>
+</ul>
+</section>
+<section id="what-is-fetch" class="slide level2">
+<h2>What is <code>fetch</code>?</h2>
+<ul>
+<li>A modern <strong>JavaScript API</strong> for making HTTP requests</li>
+<li>Replaces older <code>XMLHttpRequest</code></li>
+<li>Returns a <strong>Promise</strong></li>
+</ul>
+</section>
+<section id="fetch---get-example" class="slide level2">
+<h2><code>fetch</code> - GET Example</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb14-1"><a href=""></a><span class="fu">fetch</span>(<span class="st">'https://api.example.com/users'</span>)</span>
+<span id="cb14-2"><a href=""></a>  <span class="op">.</span><span class="fu">then</span>(response <span class="kw">=&gt;</span> response<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb14-3"><a href=""></a>  <span class="op">.</span><span class="fu">then</span>(data <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(data))</span>
+<span id="cb14-4"><a href=""></a>  <span class="op">.</span><span class="fu">catch</span>(error <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(error))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Sends a <strong>GET</strong> request</li>
+<li>Parses response JSON</li>
+<li>Handles errors with <code>.catch()</code></li>
+</ul>
+</section>
+<section id="fetch---post-example" class="slide level2">
+<h2><code>fetch</code> - POST Example</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb15-1"><a href=""></a><span class="fu">fetch</span>(<span class="st">'https://api.example.com/users'</span><span class="op">,</span> {</span>
+<span id="cb15-2"><a href=""></a>  <span class="dt">method</span><span class="op">:</span> <span class="st">'POST'</span><span class="op">,</span></span>
+<span id="cb15-3"><a href=""></a>  <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb15-4"><a href=""></a>    <span class="st">'Content-Type'</span><span class="op">:</span> <span class="st">'application/json'</span></span>
+<span id="cb15-5"><a href=""></a>  }<span class="op">,</span></span>
+<span id="cb15-6"><a href=""></a>  <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb15-7"><a href=""></a>    <span class="dt">name</span><span class="op">:</span> <span class="st">'Alice'</span><span class="op">,</span></span>
+<span id="cb15-8"><a href=""></a>    <span class="dt">age</span><span class="op">:</span> <span class="dv">25</span></span>
+<span id="cb15-9"><a href=""></a>  })</span>
+<span id="cb15-10"><a href=""></a>})</span>
+<span id="cb15-11"><a href=""></a><span class="op">.</span><span class="fu">then</span>(response <span class="kw">=&gt;</span> response<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb15-12"><a href=""></a><span class="op">.</span><span class="fu">then</span>(data <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(data))</span>
+<span id="cb15-13"><a href=""></a><span class="op">.</span><span class="fu">catch</span>(error <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(error))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Sends a <strong>POST</strong> request</li>
+<li>Sends data in the <strong>body</strong></li>
+<li>Sets proper <strong>headers</strong></li>
+</ul>
+</section>
+<section class="slide level2">
+
+</section>
+<section id="fetch-example-from-project" class="slide level2">
+<h2>Fetch Example from Project</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb16-1"><a href=""></a><span class="co">// Test GET /api/</span></span>
+<span id="cb16-2"><a href=""></a><span class="kw">const</span> res1 <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">"/api/"</span>)<span class="op">;</span></span>
+<span id="cb16-3"><a href=""></a><span class="kw">const</span> data1 <span class="op">=</span> <span class="cf">await</span> res1<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb17-1"><a href=""></a><span class="co">// Test GET /api/students/michael</span></span>
+<span id="cb17-2"><a href=""></a><span class="kw">const</span> res3 <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">"/api/students/michael"</span>)<span class="op">;</span></span>
+<span id="cb17-3"><a href=""></a><span class="kw">const</span> student <span class="op">=</span> <span class="cf">await</span> res3<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource js number-lines code-with-copy"><code class="sourceCode javascript"><span id="cb18-1"><a href=""></a><span class="co">// Test PATCH /api/students/michael</span></span>
+<span id="cb18-2"><a href=""></a><span class="kw">const</span> res4 <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">"/api/students/michael"</span><span class="op">,</span> {</span>
+<span id="cb18-3"><a href=""></a>        <span class="dt">method</span><span class="op">:</span> <span class="st">"PATCH"</span><span class="op">,</span></span>
+<span id="cb18-4"><a href=""></a>        <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb18-5"><a href=""></a>          <span class="st">"Content-Type"</span><span class="op">:</span> <span class="st">"application/json"</span><span class="op">,</span></span>
+<span id="cb18-6"><a href=""></a>        }<span class="op">,</span></span>
+<span id="cb18-7"><a href=""></a>        <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb18-8"><a href=""></a>          <span class="dt">unitsCompleted</span><span class="op">:</span> <span class="dv">150</span><span class="op">,</span></span>
+<span id="cb18-9"><a href=""></a>          <span class="dt">dept</span><span class="op">:</span> <span class="st">"Computer Science"</span><span class="op">,</span></span>
+<span id="cb18-10"><a href=""></a>        })<span class="op">,</span></span>
+<span id="cb18-11"><a href=""></a>      })<span class="op">;</span></span>
+<span id="cb18-12"><a href=""></a>      <span class="kw">const</span> updatedStudent <span class="op">=</span> <span class="cf">await</span> res4<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section class="slide level2">
+
+</section>
+<section id="summary" class="slide level2">
+<h2>Summary</h2>
+<ul>
+<li>HTTP is the foundation of web communication</li>
+<li>Requests have methods, headers, and optionally a body</li>
+<li><code>fetch</code> is the modern way to send HTTP requests from JavaScript</li>
+<li>Use <strong>GET</strong> for retrieving, <strong>POST</strong> for sending data</li>
+</ul>
+</section>
 <section class="slide level2">
 
 
