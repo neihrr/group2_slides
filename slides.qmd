@@ -85,4 +85,424 @@ format: revealjs
 
 ![AJAX exmaple with jquery](ajax_jquery.png)
 
+------
+
+## REST APIs and JSON
+
+**REST** (Representational state transfer): Defines certain rules the API will follow
+
+- Each "thing" we want to send/receive is a "resource"
+- Identified by a URI (path)
+- Servers return "representation" of the resource
+- Clients send (possibly partial) representations to update resources
+- Servers are stateless, they don't "remember" clients
+- Each request includes URI, user info, authorization token, etc.
+
+## Promises
+
+Promise -> is a returned object to which you attach callbacks
+
+- pending: initial state, neither fulfilled nor rejected.
+- fulfilled: meaning that the operation was completed successfully.
+- rejected: meaning that the operation failed.
+
+```js
+new Promise((resolveOuter) => {
+  resolveOuter(
+    new Promise((resolveInner) => {
+      setTimeout(resolveInner, 1000);
+    }),
+  );
+});
+```
+
 ---
+
+## Promises
+
+```js
+function successCallback(result) {
+  console.log(`Audio file ready at URL: ${result}`);
+}
+
+function failureCallback(error) {
+  console.error(`Error generating audio file: ${error}`);
+}
+
+createAudioFileAsync(audioSettings, successCallback, failureCallback);
+```
+
+we can rewrite this to return a Promise ->
+
+```js
+createAudioFileAsync(audioSettings).then(successCallback, failureCallback);
+```
+## Promises
+
+Beware of "callback hell" -> nesting many **then** operations results in messy code (**NOT GOOD**)
+
+```js
+_onClick(event) {
+    /* Callback hell */
+    let p = fetch("myfile.txt");
+    // This is fine, but we'd have a lot of methods
+    //p.then(this._onResult);
+    p.then((response) => {
+      let p2 = response.text();
+      p2.then((text) => {
+        let p3 = fetch("person.json");
+        p3.then((res) => {
+          let p4 = res.json();
+          p4.then((obj) => {
+            let s = `${text}\n${obj.givenName} ${obj.surname}`;
+            document.querySelector("#results").textContent = s;
+          });
+        });      });
+    });}
+```
+
+---
+
+## Promise chains
+
+```js
+new Promise(function(resolve, reject) {
+
+  setTimeout(() => resolve(1), 1000); // (*)
+
+}).then(function(result) { // (**)
+
+  alert(result); // 1
+  return result * 2;
+
+}).then(function(result) { // (***)
+
+  alert(result); // 2
+  return result * 2;
+
+}).then(function(result) {
+
+  alert(result); // 4
+  return result * 2;
+
+});
+```
+
+---
+
+## Promise chains
+
+- Easier flow (each output is and imput to the next **then** )
+- Easier to debug (one **catch** at the end handles errors from all of the steps
+```js
+new Promise(function(resolve, reject) {
+
+  setTimeout(() => resolve(1), 1000); // (*)
+
+}).then(function(result) { // (**)
+
+  alert(result); // 1
+  return result * 2;
+
+}).then(function(result) { // (***)
+
+  alert(result); // 2
+  return result * 2;
+
+}).then(function(result) {
+
+  alert(result); // 4
+  return result * 2;
+
+}).catch(function(err)){
+  alert(err);
+};
+```
+
+
+---
+
+## Fetch 
+
+fetch() -> takes a path to the file (url) and return a Promise with "Response" (basically fullfills it as soon as http response arrives)
+
+```js
+async listCourses() {
+    let res = await fetch(`${this._uri}/courses`);
+    let json = await res.json();
+    return json.courses;
+  }
+```
+
+- response.status -> read the HTTP status code of the response
+- response.text() -> read the HTTP response body and encodes it as a string
+- response.json() -> interpret the response body and returns a Promise with the data
+
+---
+
+
+
+## REST APIs and JSON
+
+**JSON** (JavaScript Object Notation)
+
+- Based on JS object syntax, but stricter
+- Contains strings, numbers, true, false, null, arrays, objects
+- Each property must be in the form of `"key": value`
+
+```json
+{
+  "id": 1206,
+  "courses": [
+    { "dept": "CS", "num": "106A" },
+    { *"dept": "CS"*, "num": "106A" },
+   ],
+   "current": true
+}
+```
+
+Access: object.courses\[1\].dept
+
+## Classes and Rest APIs
+
+Classes can be used to model RESTful resources
+
+- **Encapsulate** resource-related logic and data in one place
+- **Reuse** methods across different instances
+- **Abstract** away HTTP details from the rest of the application
+
+```js
+class Student {
+  constructor(data) {
+    Object.assign(this, data); // Initialize properties
+  }
+
+  static async load(id) {
+    const response = await fetch(`/api/students/${id}`);
+    const data = await response.json();
+    return new Student(data);
+  }
+}
+```
+
+---
+---
+title: "Asynchronous Class Instance Initialization"
+format: revealjs
+author: Javad Sheikhimofrad
+---
+
+## Why async static methods?
+
+- In JavaScript, constructors can't be async.
+- If you need to fetch data from a server before creating an instance, use a static async method.
+- The static method fetches data asynchronously, then creates and returns an instance.
+
+---
+
+## Example Pattern
+
+```js
+class User {
+  constructor(data) {
+    Object.assign(this, data);
+  }
+  static async load(id) {
+    let res = await fetch(`/api/users/${id}`);
+    let data = await res.json();
+    return new User(data);
+  }
+}
+
+// Usage:
+let user = await User.load("ali");
+console.log(user);
+```
+
+---
+
+## In Our Project
+
+```js
+static async load(id) {
+  let res = await fetch(`/api/students/${id}`);
+  let data = await res.json();
+  return new Student(data);
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+title: "HTTP Request/Response & fetch (get/post)"
+format: revealjs
+editor: visual
+---
+
+## Topics Covered
+
+1.  HTTP Request & Response
+2.  Using `fetch` API (GET & POST)
+
+------------------------------------------------------------------------
+
+## What is HTTP?
+
+-   HyperText Transfer Protocol
+-   Foundation of data communication on the web
+-   Protocol used for communication between clients (e.g., browser) and servers
+
+------------------------------------------------------------------------
+
+## HTTP Request Structure
+
+A request typically consists of:
+
+-   **Method** (e.g., GET, POST)
+-   **URL** (e.g., `/api/user`)
+-   **Headers** (metadata like content-type)
+-   **Body** (only in methods like POST/PUT)
+
+``` http
+POST /api/login HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "pass123"
+}
+```
+
+------------------------------------------------------------------------
+
+## HTTP Response Structure
+
+A response contains:
+
+-   **Status Code** (e.g., 200, 404, 500)
+-   **Headers**
+-   **Body**
+
+``` http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "Login successful",
+  "token": "abc123"
+}
+```
+
+------------------------------------------------------------------------
+
+## Common HTTP Methods
+
+-   **GET**: Retrieve data
+-   **POST**: Send new data
+-   **PUT**: Update existing data
+-   **DELETE**: Remove data
+
+------------------------------------------------------------------------
+
+## What is `fetch`?
+
+-   A modern **JavaScript API** for making HTTP requests
+-   Replaces older `XMLHttpRequest`
+-   Returns a **Promise**
+
+------------------------------------------------------------------------
+
+## `fetch` - GET Example
+
+``` js
+fetch('https://api.example.com/users')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+```
+
+-   Sends a **GET** request
+-   Parses response JSON
+-   Handles errors with `.catch()`
+
+------------------------------------------------------------------------
+
+## `fetch` - POST Example
+
+``` js
+fetch('https://api.example.com/users', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Alice',
+    age: 25
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error(error));
+```
+
+-   Sends a **POST** request
+-   Sends data in the **body**
+-   Sets proper **headers**
+
+------------------------------------------------------------------
+
+------
+
+## Fetch Example from Project
+``` js
+// Test GET /api/
+const res1 = await fetch("/api/");
+const data1 = await res1.json();
+```
+
+``` js
+// Test GET /api/students/michael
+const res3 = await fetch("/api/students/michael");
+const student = await res3.json();
+```
+
+``` js
+// Test PATCH /api/students/michael
+const res4 = await fetch("/api/students/michael", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          unitsCompleted: 150,
+          dept: "Computer Science",
+        }),
+      });
+      const updatedStudent = await res4.json();
+```
+
+------------------------------------------------------------------------
+
+------
+
+## Summary
+
+-   HTTP is the foundation of web communication
+-   Requests have methods, headers, and optionally a body
+-   `fetch` is the modern way to send HTTP requests from JavaScript
+-   Use **GET** for retrieving, **POST** for sending data
+
+------------------------------------------------------------------------
+
