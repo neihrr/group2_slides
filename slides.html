@@ -150,8 +150,67 @@ Widely used in modern web applications.</p></li>
 <section id="event-loop" class="slide level2">
 <h2>Event Loop</h2>
 
-
 <img data-src="event_loop.png" class="r-stretch quarto-figure-center"><p class="caption">Internals of Asynchronous Javascript</p></section>
+<section id="how-javascript-handles-asynchronous-code" class="slide level2">
+<h2>How JavaScript Handles Asynchronous Code</h2>
+<ul>
+<li><p><strong>Call Stack</strong><br>
+The call stack is where functions are executed in the order they’re called.<br>
+In synchronous operations, each function is added to the stack and executed before moving to the next.</p></li>
+<li><p><strong>Web APIs (in Browsers)</strong><br>
+Functions like <code>setTimeout</code>, HTTP requests, and event listeners are handled by Web APIs in the browser.<br>
+They manage the timing without blocking the main call stack.</p></li>
+<li><p><strong>Callback Queue</strong><br>
+Once the Web API has finished its job (like waiting for the timeout),<br>
+it pushes the callback function (like the one in <code>setTimeout</code>) to the callback queue.</p></li>
+<li><p><strong>Event Loop</strong><br>
+The event loop continuously checks the call stack.<br>
+If it’s empty, it pushes the functions from the callback queue onto the stack for execution.</p></li>
+</ul>
+</section>
+<section id="xmlhttprequest" class="slide level2">
+<h2>XMLHttpRequest</h2>
+<ul>
+<li><strong>JavaScript object</strong> that lets web pages send/receive data without reloading.</li>
+<li>First introduced by Microsoft (IE) in early 2000s.</li>
+<li>Core of early dynamic web apps.</li>
+</ul>
+
+<img data-src="XMLHttpRequest.png" class="r-stretch quarto-figure-center"><p class="caption">Querying with XMLHttpRequest</p></section>
+<section id="ajax" class="slide level2">
+<h2>AJAX</h2>
+<ul>
+<li><strong>Made of:</strong> JavaScript + XMLHttpRequest (or later fetch) + HTML/DOM + CSS + (optionally) XML/JSON.</li>
+<li>AJAX introduced a pattern for combining:</li>
+<li>HTML/CSS for layout</li>
+<li>JavaScript for logic</li>
+<li>XHR for data transfer -AJAX popularized patterns that led to development of modern frameworks ( React, Vue, and Angular)</li>
+</ul>
+</section>
+<section id="example-ajax-snipper" class="slide level2">
+<h2>Example AJAX Snipper</h2>
+
+<img data-src="ajax.png" class="r-stretch quarto-figure-center"><p class="caption">AJAX</p></section>
+<section class="slide level2">
+
+</section>
+<section id="jquery" class="slide level2">
+<h2>Jquery</h2>
+<ul>
+<li><strong>Why it was popular:</strong></li>
+<li>Simplified DOM manipulation and event handling.</li>
+<li>Provided a unified API across all browsers (when cross-browser issues were huge).</li>
+<li>Simplified AJAX requests with cleaner syntax.</li>
+</ul>
+</section>
+<section id="example-ajax-snipper-1" class="slide level2">
+<h2>Example AJAX Snipper</h2>
+
+<img data-src="ajax_jquery.png" class="r-stretch quarto-figure-center"><p class="caption">AJAX exmaple with jquery</p></section>
+<section class="slide level2">
+
+
+</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

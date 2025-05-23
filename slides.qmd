@@ -41,3 +41,48 @@ format: revealjs
   The event loop continuously checks the call stack.  
   If it’s empty, it pushes the functions from the callback queue onto the stack for execution.  
 
+---
+
+## XMLHttpRequest
+
+- **JavaScript object** that lets web pages send/receive data without reloading.
+- First introduced by Microsoft (IE) in early 2000s.
+- Core of early dynamic web apps.
+
+![Querying with XMLHttpRequest](XMLHttpRequest.png)
+
+---
+
+## AJAX
+
+- **Made of:** JavaScript + XMLHttpRequest (or later fetch) + HTML/DOM + CSS + (optionally) XML/JSON.
+- AJAX introduced a pattern for combining:
+- HTML/CSS for layout
+- JavaScript for logic
+- XHR for data transfer
+-AJAX popularized patterns that led to development of modern frameworks ( React, Vue, and Angular)
+
+---
+
+## Example AJAX Snipper
+
+![AJAX](ajax.png)
+
+---
+
+---
+
+## Jquery
+
+- **Why it was popular:** 
+- Simplified DOM manipulation and event handling.
+- Provided a unified API across all browsers (when cross-browser issues were huge).
+- Simplified AJAX requests with cleaner syntax.
+
+---
+
+## Example AJAX Snipper
+
+![AJAX exmaple with jquery](ajax_jquery.png)
+
+---
