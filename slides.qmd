@@ -1,0 +1,15 @@
+---
+title: "My Presentation"
+format: revealjs
+---
+
+## Slide 1
+
+This is the first slide.
+
+---
+
+## Slide 2
+
+- Bullet point 1
+- Bullet point 2
