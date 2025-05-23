@@ -54,6 +54,150 @@ format: revealjs
 - Servers are stateless, they don't "remember" clients
 - Each request includes URI, user info, authorization token, etc.
 
+## Promises
+
+Promise -> is a returned object to which you attach callbacks
+
+- pending: initial state, neither fulfilled nor rejected.
+- fulfilled: meaning that the operation was completed successfully.
+- rejected: meaning that the operation failed.
+
+```js
+new Promise((resolveOuter) => {
+  resolveOuter(
+    new Promise((resolveInner) => {
+      setTimeout(resolveInner, 1000);
+    }),
+  );
+});
+```
+
+---
+
+## Promises
+
+```js
+function successCallback(result) {
+  console.log(`Audio file ready at URL: ${result}`);
+}
+
+function failureCallback(error) {
+  console.error(`Error generating audio file: ${error}`);
+}
+
+createAudioFileAsync(audioSettings, successCallback, failureCallback);
+```
+
+we can rewrite this to return a Promise ->
+
+```js
+createAudioFileAsync(audioSettings).then(successCallback, failureCallback);
+```
+## Promises
+
+Beware of "callback hell" -> nesting many **then** operations results in messy code (**NOT GOOD**)
+
+```js
+_onClick(event) {
+    /* Callback hell */
+    let p = fetch("myfile.txt");
+    // This is fine, but we'd have a lot of methods
+    //p.then(this._onResult);
+    p.then((response) => {
+      let p2 = response.text();
+      p2.then((text) => {
+        let p3 = fetch("person.json");
+        p3.then((res) => {
+          let p4 = res.json();
+          p4.then((obj) => {
+            let s = `${text}\n${obj.givenName} ${obj.surname}`;
+            document.querySelector("#results").textContent = s;
+          });
+        });      });
+    });}
+```
+
+---
+
+## Promise chains
+
+```js
+new Promise(function(resolve, reject) {
+
+  setTimeout(() => resolve(1), 1000); // (*)
+
+}).then(function(result) { // (**)
+
+  alert(result); // 1
+  return result * 2;
+
+}).then(function(result) { // (***)
+
+  alert(result); // 2
+  return result * 2;
+
+}).then(function(result) {
+
+  alert(result); // 4
+  return result * 2;
+
+});
+```
+
+---
+
+## Promise chains
+
+- Easier flow (each output is and imput to the next **then** )
+- Easier to debug (one **catch** at the end handles errors from all of the steps
+```js
+new Promise(function(resolve, reject) {
+
+  setTimeout(() => resolve(1), 1000); // (*)
+
+}).then(function(result) { // (**)
+
+  alert(result); // 1
+  return result * 2;
+
+}).then(function(result) { // (***)
+
+  alert(result); // 2
+  return result * 2;
+
+}).then(function(result) {
+
+  alert(result); // 4
+  return result * 2;
+
+}).catch(function(err)){
+  alert(err);
+};
+```
+
+
+---
+
+## Fetch 
+
+fetch() -> takes a path to the file (url) and return a Promise with "Response" (basically fullfills it as soon as http response arrives)
+
+```js
+async listCourses() {
+    let res = await fetch(`${this._uri}/courses`);
+    let json = await res.json();
+    return json.courses;
+  }
+```
+
+- response.status -> read the HTTP status code of the response
+- response.text() -> read the HTTP response body and encodes it as a string
+- response.json() -> interpret the response body and returns a Promise with the data
+
+---
+
+
+
 ## REST APIs and JSON
 
 **JSON** (JavaScript Object Notation)
