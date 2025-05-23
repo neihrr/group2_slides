@@ -41,3 +41,60 @@ format: revealjs
   The event loop continuously checks the call stack.  
   If it’s empty, it pushes the functions from the callback queue onto the stack for execution.  
 
+---
+
+## REST APIs and JSON
+
+**REST** (Representational state transfer): Defines certain rules the API will follow
+
+- Each "thing" we want to send/receive is a "resource"
+- Identified by a URI (path)
+- Servers return "representation" of the resource
+- Clients send (possibly partial) representations to update resources
+- Servers are stateless, they don't "remember" clients
+- Each request includes URI, user info, authorization token, etc.
+
+## REST APIs and JSON
+
+**JSON** (JavaScript Object Notation)
+
+- Based on JS object syntax, but stricter
+- Contains strings, numbers, true, false, null, arrays, objects
+- Each property must be in the form of `"key": value`
+
+```json
+{
+  "id": 1206,
+  "courses": [
+    { "dept": "CS", "num": "106A" },
+    { *"dept": "CS"*, "num": "106A" },
+   ],
+   "current": true
+}
+```
+
+Access: object.courses\[1\].dept
+
+## Classes and Rest APIs
+
+Classes can be used to model RESTful resources
+
+- **Encapsulate** resource-related logic and data in one place
+- **Reuse** methods across different instances
+- **Abstract** away HTTP details from the rest of the application
+
+```js
+class Student {
+  constructor(data) {
+    Object.assign(this, data); // Initialize properties
+  }
+
+  static async load(id) {
+    const response = await fetch(`/api/students/${id}`);
+    const data = await response.json();
+    return new Student(data);
+  }
+}
+```
+
+---
