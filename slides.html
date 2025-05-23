@@ -9,7 +9,7 @@
 <link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.7.31">
 
-  <title>My Presentation</title>
+  <title>Fetch, async/await</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -126,24 +126,32 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">My Presentation</h1>
+  <h1 class="title">Fetch, async/await</h1>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
-<section id="slide-1" class="slide level2">
-<h2>Slide 1</h2>
-<p>This is the first slide.</p>
-</section>
-<section id="slide-2" class="slide level2">
-<h2>Slide 2</h2>
+<section id="asynchronous-vs.-synchronous-javascript" class="slide level2">
+<h2>Asynchronous vs.&nbsp;Synchronous JavaScript</h2>
 <ul>
-<li>Bullet point 1</li>
-<li>Bullet point 2</li>
+<li><p><strong>Synchronous JavaScript</strong><br>
+Operations are performed one after the other.<br>
+Each line of code waits for the previous one.<br>
+Predictable, linear order.<br>
+Each task is completed before the next one starts.</p></li>
+<li><p><strong>Asynchronous JavaScript</strong><br>
+Allows multiple tasks to run independently of each other.<br>
+Non-blocking nature of execution.<br>
+Improves performance and responsiveness.<br>
+Widely used in modern web applications.</p></li>
 </ul>
-
 </section>
+<section id="event-loop" class="slide level2">
+<h2>Event Loop</h2>
+
+
+<img data-src="event_loop.png" class="r-stretch quarto-figure-center"><p class="caption">Internals of Asynchronous Javascript</p></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
