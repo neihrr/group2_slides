@@ -87,17 +87,6 @@ format: revealjs
 
 ------
 
-## REST APIs and JSON
-
-**REST** (Representational state transfer): Defines certain rules the API will follow
-
-- Each "thing" we want to send/receive is a "resource"
-- Identified by a URI (path)
-- Servers return "representation" of the resource
-- Clients send (possibly partial) representations to update resources
-- Servers are stateless, they don't "remember" clients
-- Each request includes URI, user info, authorization token, etc.
-
 ## Promises
 
 Promise -> is a returned object to which you attach callbacks
@@ -240,6 +229,17 @@ async listCourses() {
 
 ---
 
+
+## REST APIs and JSON
+
+**REST** (Representational state transfer): Defines certain rules the API will follow
+
+- Each "thing" we want to send/receive is a "resource"
+- Identified by a URI (path)
+- Servers return "representation" of the resource
+- Clients send (possibly partial) representations to update resources
+- Servers are stateless, they don't "remember" clients
+- Each request includes URI, user info, authorization token, etc.
 
 
 ## REST APIs and JSON
