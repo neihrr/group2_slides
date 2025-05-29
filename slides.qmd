@@ -70,8 +70,6 @@ format: revealjs
 
 ---
 
----
-
 ## Jquery
 
 - **Why it was popular:** 
@@ -85,7 +83,7 @@ format: revealjs
 
 ![AJAX exmaple with jquery](ajax_jquery.png)
 
-------
+---
 
 ## REST APIs and JSON
 
@@ -240,8 +238,6 @@ async listCourses() {
 
 ---
 
-
-
 ## REST APIs and JSON
 
 **JSON** (JavaScript Object Notation)
@@ -326,25 +322,12 @@ static async load(id) {
 }
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Topics Covered
 
 1.  HTTP Request & Response
 2.  Using `fetch` API (GET & POST)
 
-------------------------------------------------------------------------
+---
 
 ## What is HTTP?
 
@@ -352,16 +335,17 @@ static async load(id) {
 -   Foundation of data communication on the web
 -   Protocol used for communication between clients (e.g., browser) and servers
 
-------------------------------------------------------------------------
+---
 
 ## HTTP Request Structure
 
 A request typically consists of:
 
--   **Method** (e.g., GET, POST)
--   **URL** (e.g., `/api/user`)
--   **Headers** (metadata like content-type)
--   **Body** (only in methods like POST/PUT)
+-   "**Method**" (e.g., GET, POST)
+-   "**URL**" (e.g., `/api/user`)
+-   "**Headers**" (metadata like content-type)
+-   "**Body**" (only in methods like POST/PUT)
+
 
 ``` http
 POST /api/login HTTP/1.1
@@ -374,7 +358,7 @@ Content-Type: application/json
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 ## HTTP Response Structure
 
@@ -394,7 +378,7 @@ Content-Type: application/json
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Common HTTP Methods
 
@@ -403,7 +387,7 @@ Content-Type: application/json
 -   **PUT**: Update existing data
 -   **DELETE**: Remove data
 
-------------------------------------------------------------------------
+---
 
 ## What is `fetch`?
 
@@ -411,7 +395,7 @@ Content-Type: application/json
 -   Replaces older `XMLHttpRequest`
 -   Returns a **Promise**
 
-------------------------------------------------------------------------
+---
 
 ## `fetch` - GET Example
 
@@ -426,9 +410,9 @@ fetch('https://api.example.com/users')
 -   Parses response JSON
 -   Handles errors with `.catch()`
 
-------------------------------------------------------------------------
+---
 
-## `fetch` - POST Example
+## `fetch` -  POST Example
 
 ``` js
 fetch('https://api.example.com/users', {
@@ -450,9 +434,7 @@ fetch('https://api.example.com/users', {
 -   Sends data in the **body**
 -   Sets proper **headers**
 
-------------------------------------------------------------------
-
-------
+---
 
 ## Fetch Example from Project
 ``` js
@@ -482,9 +464,7 @@ const res4 = await fetch("/api/students/michael", {
       const updatedStudent = await res4.json();
 ```
 
-------------------------------------------------------------------------
-
-------
+---
 
 ## Summary
 
@@ -493,5 +473,5 @@ const res4 = await fetch("/api/students/michael", {
 -   `fetch` is the modern way to send HTTP requests from JavaScript
 -   Use **GET** for retrieving, **POST** for sending data
 
-------------------------------------------------------------------------
+
 
